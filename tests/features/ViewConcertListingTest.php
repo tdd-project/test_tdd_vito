@@ -12,13 +12,9 @@ class ViewConcertListingTest extends TestCase
     use DatabaseMigrations;
     /** @test */
     
-    public function user_can_view_a_concert_listing()
+    public function user_can_view_a_published_concert_listing()
     {
-       //Arrange
-
-
-       //Create a concert
-        $concert = Concert::create([
+        $concert = factory(Concert::class)->states('published')->create([
             'title'=>'The Red Chord',
             'subtitle'=>'with Animosity adn Lethargy',
             'date'=>Carbon::parse('December 13,2017 8:00pm'),
@@ -29,15 +25,12 @@ class ViewConcertListingTest extends TestCase
             'state'=>'on',
             'zip'=>'17916',
             'additional_information'=>'for tickets , call(111) 222-3333',
+            'published_at'=>Carbon::parse('-1 week'),
         ]);
 
-       //Act
+       
+       $this->visit('/concerts/'.$concert->id);
 
-
-       //Assert
-        $this->visit('/concerts/'.$concert->id);
-
-       //See the concert details
        $this->see('The Red Chord');
        $this->see('with Animosity adn Lethargy');
        $this->see('December 13,2017');
@@ -48,5 +41,15 @@ class ViewConcertListingTest extends TestCase
        $this->see('laravel on 17916');
        $this->see('for tickets , call(111) 222-3333');
     
+    }
+
+    /** @test */
+
+    function user_cannot_view_unpublished_concert_listings(){
+        $concert= factory(Concert::class)->states('unpublished')->create();
+
+        $this->get('/concerts/'.$concert->id);
+
+        $this->assertResponseStatus(404);
     }
 }

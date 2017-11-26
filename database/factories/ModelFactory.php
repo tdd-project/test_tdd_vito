@@ -1,5 +1,5 @@
 <?php
-
+use Carbon\Carbon;
 /*
 |--------------------------------------------------------------------------
 | Model Factories
@@ -21,4 +21,36 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
         'password' => $password ?: $password = bcrypt('secret'),
         'remember_token' => str_random(10),
     ];
+});
+
+$factory->define(App\Concert::class, function (Faker\Generator $faker){
+
+    return [
+        'title'=>'Example Chord',
+        'subtitle'=>'with The Fake openers',
+        'date'=>Carbon::parse('+2 weeks'),
+        'ticket_price'=>2000,
+        'venue'=>'The Example Theatre',
+        'venue_address'=>'123 example lane',
+        'city'=>'Fakeville',
+        'state'=>'on',
+        'zip'=>'90210',
+        'additional_information'=>'Some sample additional information.',
+    ];
+});
+
+$factory->state(App\Concert::class , 'published', function($faker){
+    return [
+        'published_at'=>Carbon::parse('-1 week'),
+
+    ];
+
+});
+
+$factory->state(App\Concert::class , 'unpublished', function($faker){
+    return [
+        'published_at'=>null,
+
+    ];
+
 });
